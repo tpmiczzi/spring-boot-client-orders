@@ -1,5 +1,7 @@
 package aplication.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -26,6 +28,7 @@ public class Orders {
     private String currency;
 
     @OneToOne
+    @JsonIgnore
     @JoinColumn(name = "client_id")
     private Client client;
 

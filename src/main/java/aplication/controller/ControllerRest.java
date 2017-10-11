@@ -22,7 +22,7 @@ public class ControllerRest {
     @Autowired
     private OrdersServicesImpl ordersServices;
 
-    @RequestMapping(value = "/client/create", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    @RequestMapping(value = "/client", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     @ResponseBody
     public ResponseEntity clientCreate(@RequestParam(value = "name") String name,
                                        @RequestParam(value = "surname") String surname,
@@ -38,17 +38,17 @@ public class ControllerRest {
         return new ResponseEntity<>(clientRespone, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/client/{id}", produces = "application/json")
+    @RequestMapping(value = "/client/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity getClientById(@PathVariable("id") long id) {
         return new ResponseEntity<>(clientServices.getClientById(id), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/allclient", produces = "application/json")
+    @RequestMapping(value = "/clients", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity getAllClient() {
         return new ResponseEntity<>(clientServices.getAllClient(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/client/edit/{id}", produces = "application/json")
+    @RequestMapping(value = "/client/edit/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity editClientById(@PathVariable("id") long id,
                                          @RequestParam(value = "name") String name,
                                          @RequestParam(value = "surname") String surname,
@@ -58,37 +58,37 @@ public class ControllerRest {
         return new ResponseEntity<>(clientRespone, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/createOrdersByClient", produces = "application/json")
-    public ResponseEntity createOrdersByClien(@RequestParam(value = "date") String date,
+    @RequestMapping(value = "/order/client/{idClient}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity createOrdersByClient(@PathVariable("idClient") long idClient,
+                                              @RequestParam(value = "date") String date,
                                               @RequestParam(value = "status") String status,
                                               @RequestParam(value = "sum") long sum,
-                                              @RequestParam(value = "currency") String currency,
-                                              @RequestParam(value = "clientId") long clientId) {
+                                              @RequestParam(value = "currency") String currency) {
         Orders orders = new Orders();
         orders.setDate(transformationDate(date));
         orders.setStatus(status);
         orders.setSum(sum);
         orders.setCurrency(currency);
-        Client clientTmp = clientServices.getClientById(clientId);
+        Client clientTmp = clientServices.getClientById(idClient);
         orders.setClient(clientTmp);
         return new ResponseEntity<>(ordersServices.createOrdersByClient(orders), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/allorders", produces = "application/json")
+    @RequestMapping(value = "/orders", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity getAllOrders() {
         return new ResponseEntity<>(ordersServices.getAllOrders(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/approveOrdersByClient/{idClient}/{idOrders}", produces = "application/json")
+    @RequestMapping(value = "/order/{idOrders}/client/{idClient}", produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity approveOrdersByClient(@PathVariable("idClient") long idClient,
                                                 @PathVariable("idOrders") long idOrders,
                                                 @RequestParam(value = "status") String status) {
         return new ResponseEntity<>(ordersServices.approveOrdersByClient(idClient, idOrders, status), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/getAllOrdersByClient/{id}", produces = "application/json")
-    public ResponseEntity getAllOrdersByClient(@PathVariable("id") long id) {
-        return new ResponseEntity<>(ordersServices.getAllOrdersByClient(id), HttpStatus.OK);
+    @RequestMapping(value = "/orders/client/{idClient}", produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity getAllOrdersByClient(@PathVariable("idClient") long idClient) {
+        return new ResponseEntity<>(ordersServices.getAllOrdersByClient(idClient), HttpStatus.OK);
     }
 
     private Date transformationDate(String dateString){
