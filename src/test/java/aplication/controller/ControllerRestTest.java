@@ -3,25 +3,20 @@ package aplication.controller;
 import aplication.BaseTest;
 import aplication.dao.ClientRepositoryImpl;
 import aplication.dao.OrdersRepositoryImpl;
+import aplication.entity.Client;
+import aplication.entity.Orders;
 import org.junit.*;
-import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestComponent;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.text.*;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import static org.hamcrest.Matchers.*;
 
@@ -42,12 +37,6 @@ public class ControllerRestTest extends BaseTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
 
-//    @After
-//    public void clear(){
-//        clientRepository.clearTable();
-//        ordersRepository.clearTable();
-//    }
-
     int idClient = 1;
     long idOrders = 1;
 
@@ -64,7 +53,7 @@ public class ControllerRestTest extends BaseTest {
 
     @Test
     public void getClientById() throws Exception {
-        this.clientCreate();
+        this.initTestData();
         String defaultUrl = "/client/" + idClient;
         mockMvc.perform(get(defaultUrl))
                 .andExpect(status().isOk())
@@ -74,7 +63,7 @@ public class ControllerRestTest extends BaseTest {
 
     @Test
     public void getAllClient() throws Exception {
-        this.clientCreate();
+        this.initTestData();
         String defaultUrl = "/clients";
         mockMvc.perform(get(defaultUrl))
                 .andExpect(status().isOk())
@@ -108,13 +97,12 @@ public class ControllerRestTest extends BaseTest {
 
     @Test
     public void getAllOrders() throws Exception {
-        this.createOrdersByClient();
         String defaultUrl = "/orders";
         mockMvc.perform(get(defaultUrl))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$[0].idOrders", is(1)))
-                .andExpect(jsonPath("$[1].idOrders", is(2)));
+                .andExpect(jsonPath("$[0].idOrders", is(2)))
+                .andExpect(jsonPath("$[1].idOrders", is(3)));
     }
 
     @Test
@@ -144,4 +132,19 @@ public class ControllerRestTest extends BaseTest {
                 .andExpect(status().isNotFound());
     }
 
+
+    public void initTestData() {
+        try {
+            clientRepository.createClient(new Client("Dima", "Pupkin", new SimpleDateFormat("yyyy-MM-dd").parse("2000-12-10"), "men"));
+            clientRepository.createClient(new Client("Vova", "Sidorov", new SimpleDateFormat("yyyy-MM-dd").parse("1999-01-12"), "men"));
+            ordersRepository.createOrdersByClient(new Orders(new SimpleDateFormat("yyyy-MM-dd").parse("2017-10-11"),
+                    "createNew", 1000, "dollar", clientRepository.getClientById(1)));
+            ordersRepository.createOrdersByClient(new Orders(new SimpleDateFormat("yyyy-MM-dd").parse("2017-10-11"),
+                    "createNew", 2000, "dollar", clientRepository.getClientById(1)));
+            ordersRepository.createOrdersByClient(new Orders(new SimpleDateFormat("yyyy-MM-dd").parse("2017-09-30"),
+                    "createNew", 9999, "euro", clientRepository.getClientById(2)));
+        } catch (ParseException pex) {
+            System.out.println(pex.getStackTrace());
+        }
+    }
 }

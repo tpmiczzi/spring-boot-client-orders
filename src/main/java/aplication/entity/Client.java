@@ -28,6 +28,13 @@ public class Client {
     public Client() {
     }
 
+    public Client(String name, String surname, Date birthday, String sex) {
+        this.name = name;
+        this.surname = surname;
+        this.birthday = birthday;
+        this.sex = sex;
+    }
+
     public long getId() {
         return idClient;
     }

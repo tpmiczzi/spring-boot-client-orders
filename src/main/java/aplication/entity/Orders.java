@@ -35,6 +35,14 @@ public class Orders {
     public Orders() {
     }
 
+    public Orders(Date date, String status, long sum, String currency, Client client) {
+        this.date = date;
+        this.status = status;
+        this.sum = sum;
+        this.currency = currency;
+        this.client = client;
+    }
+
     public long getIdOrders() {
         return idOrders;
     }

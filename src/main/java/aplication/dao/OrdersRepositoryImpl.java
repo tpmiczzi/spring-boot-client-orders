@@ -73,8 +73,8 @@ public class OrdersRepositoryImpl implements OrdersRepository {
     public void clearTable(){
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            session.createSQLQuery("DROP TABLE Orders CASCADE ").executeUpdate();
-//            session.createQuery("DELETE FROM Orders").executeUpdate();
+//            session.createSQLQuery("DROP TABLE Orders CASCADE ").executeUpdate();
+            session.createQuery("DELETE FROM Orders").executeUpdate();
             tx.commit();
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();

@@ -71,8 +71,8 @@ public class ClientRepositoryImpl implements ClientRepository {
     public void clearTable(){
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-//            session.createQuery("DELETE FROM Client").executeUpdate();
-            session.createSQLQuery("DROP TABLE Client CASCADE ").executeUpdate();
+            session.createQuery("DELETE FROM Client").executeUpdate();
+//            session.createSQLQuery("DROP TABLE Client CASCADE ").executeUpdate();
             tx.commit();
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
